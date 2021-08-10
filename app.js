@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const { PORT = 3000 } = process.env;
 const mongoose = require('mongoose');
+const helmet = require('helmet');
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -11,6 +12,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useFindAndModify: false,
   useUnifiedTopology: true,
 });
+
+app.use(helmet());
 
 app.use((req, res, next) => {
   req.user = {
