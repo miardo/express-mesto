@@ -5,6 +5,14 @@ const app = express();
 const { PORT = 3000 } = process.env;
 const mongoose = require('mongoose');
 const helmet = require('helmet');
+const { errors } = require('celebrate');
+const cookieParser = require('cookie-parser');
+
+const { login, createUser } = require('./controllers/users');
+const auth = require('./middlewares/auth');
+const handleErrors = require('./middlewares/handleErrors');
+
+const E404 = require('./middlewares/E404');
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -13,22 +21,24 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
+app.use(cookieParser());
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use(helmet());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '6109a8b6c2e0be061506c643',
-  };
+app.post('/signin', login);
+app.post('/signup', createUser);
 
-  next();
+app.use('/', auth, require('./routes/users'));
+app.use('/', auth, require('./routes/cards'));
+
+app.use('*', (req, res, next) => {
+  next(new E404('Страница не найдена'));
 });
 
-app.use('/', express.json());
-app.use('/', require('./routes/users'));
-app.use('/', require('./routes/cards'));
-
-app.use('*', (req, res) => {
-  res.status(404).send({ message: 'Страница не найдена' });
-});
+app.use(errors());
+app.use(handleErrors);
 
 app.listen(PORT);
