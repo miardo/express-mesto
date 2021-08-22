@@ -6,6 +6,7 @@ const User = require('../models/user');
 const E404 = require('../middlewares/E404');
 const E400 = require('../middlewares/E400');
 const E409 = require('../middlewares/E409');
+const E401 = require('../middlewares/E401');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -103,7 +104,6 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-
       res.cookie('jwt', token, {
         maxAge: 3600000,
         httpOnly: true,
@@ -119,5 +119,10 @@ module.exports.login = (req, res, next) => {
           },
         });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.statusCode === 500) {
+        next(err);
+      }
+      next(new E401('Неправильные почта или пароль.'));
+    });
 };
