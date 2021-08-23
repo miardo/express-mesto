@@ -12,6 +12,7 @@ const validator = require('validator');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const handleErrors = require('./middlewares/handleErrors');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const E404 = require('./middlewares/E404');
 
@@ -28,6 +29,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(helmet());
+
+app.use(requestLogger);
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -53,11 +56,14 @@ app.post('/signup', celebrate({
 app.use('/', auth, require('./routes/users'));
 app.use('/', auth, require('./routes/cards'));
 
+app.use(errorLogger);
+
+app.use(errors());
+
 app.use('*', (req, res, next) => {
   next(new E404('Страница не найдена'));
 });
 
-app.use(errors());
 app.use(handleErrors);
 
 app.listen(PORT);
