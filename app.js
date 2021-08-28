@@ -1,4 +1,5 @@
 /* eslint-disable eol-last */
+require('dotenv').config();
 const express = require('express');
 
 const app = express();
@@ -8,6 +9,7 @@ const helmet = require('helmet');
 const { errors, celebrate, Joi } = require('celebrate');
 const cookieParser = require('cookie-parser');
 const validator = require('validator');
+const cors = require('cors');
 
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
@@ -23,6 +25,10 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
+app.use(cors({
+  origin: 'https://mesto.practicum.nomoredomains.club',
+}));
+
 app.use(cookieParser());
 
 app.use(express.json());
@@ -31,6 +37,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 
 app.use(requestLogger);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
