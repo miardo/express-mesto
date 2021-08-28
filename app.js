@@ -24,7 +24,7 @@ const corsOptions = {
     'https://api.mesto.practicum.nomoredomains.monster',
     'https://localhost:3000',
   ],
-  credential: true,
+  credentials: true,
   method: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 };
 
