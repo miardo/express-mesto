@@ -18,6 +18,16 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const E404 = require('./middlewares/E404');
 
+const corsOptions = {
+  origin: [
+    'https://mesto.practicum.nomoredomains.club',
+    'https://api.mesto.practicum.nomoredomains.monster',
+    'https://localhost:3000',
+  ],
+  credential: true,
+  method: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+};
+
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useCreateIndex: true,
@@ -25,10 +35,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-app.use(cors({
-  origin: true,
-  credentials: true,
-}));
+app.use(cors(corsOptions));
 
 app.use(cookieParser());
 
