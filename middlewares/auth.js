@@ -5,13 +5,12 @@ const jwt = require('jsonwebtoken');
 const E401 = require('./E401');
 
 module.exports = (req, res, next) => {
-  const token = req.cookies;
-  const { NODE_ENV, JWT_SECRET } = process.env;
-
-  if (!token) {
+  if (!req.cookies.jwt) {
     next(new E401('Необходима авторизация.'));
   }
 
+  const token = req.cookies.jwt;
+  const { NODE_ENV, JWT_SECRET } = process.env;
   let payload;
 
   try {
