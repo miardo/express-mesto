@@ -12,7 +12,7 @@ const E401 = require('../middlewares/E401');
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      res.status(200).send({ users });
+      res.status(200).send(users);
     })
     .catch(next);
 };
@@ -109,7 +109,7 @@ module.exports.login = (req, res, next) => {
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
-        sameSite: 'none',
+        sameSite: true,
         secure: true,
       })
         .send({
