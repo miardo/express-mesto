@@ -21,7 +21,9 @@ const E404 = require('./middlewares/E404');
 const corsOptions = {
   origin: [
     'https://mesto.practicum.nomoredomains.club',
+    'http://mesto.practicum.nomoredomains.club',
     'https://api.mesto.practicum.nomoredomains.monster',
+    'http://api.mesto.practicum.nomoredomains.monster',
     'https://localhost:3000',
   ],
   credentials: true,
