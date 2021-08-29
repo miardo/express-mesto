@@ -1,16 +1,17 @@
 /* eslint-disable eol-last */
-require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 const E401 = require('./E401');
 
 module.exports = (req, res, next) => {
-  const token = req.cookies.jwt;
   const { NODE_ENV, JWT_SECRET } = process.env;
 
-  if (!token) {
+  const { authorization } = req.headers;
+
+  if (!authorization || !authorization.startsWith('Bearer ')) {
     next(new E401('Необходима авторизация.'));
   }
+  const token = authorization.replace('Bearer ', '');
 
   let payload;
 
