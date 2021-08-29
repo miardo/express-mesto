@@ -32,7 +32,7 @@ module.exports.getUser = (req, res, next) => {
 module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(new E404('Пользователь с указанным _id не найден.'))
-    .then((user) => res.status(200).send({ user }))
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new E400('Переданы некорректные данные.'));
